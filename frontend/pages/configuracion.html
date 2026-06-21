@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Configuración — Viajes Barraza</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../css/index.css?v=2" />
+<style>
+  .config-grid { display: flex; flex-direction: column; gap: 24px; }
+  .section-card { background: white; border: 1px solid var(--slate-200); border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .section-title { font-size: 16px; font-weight: 600; color: var(--slate-900); display: flex; align-items: center; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--slate-100); padding-bottom: 12px; }
+  .form-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .form-group-config { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
+  .admin-only { display: none; } /* Oculto por defecto, JS lo activará solo si es admin */
+  .badge-storage { background: var(--teal-500); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .progress-bar { width: 100%; height: 8px; background: var(--slate-100); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: var(--teal-500); width: 0%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="logo-wrap">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div>
+        <div class="logo-text-main">ArchivoClientes</div>
+        <div class="logo-text-sub">Viajes Barraza</div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section-label">Principal</div>
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Panel Principal
+    </a>
+    <a href="clientes.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Clientes
+    </a>
+    <a href="expedientes.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      Expedientes
+    </a>
+    <a href="historial.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Historial de Viajes
+    </a>
+    <a href="mapa.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Google Maps
+    </a>
+    <div class="nav-section-label" style="margin-top:12px">Sistema</div>
+    <a href="reportes.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Reportes PDF
+    </a>
+    <a href="configuracion.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Configuración
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar" id="sidebarAvatar">A</div>
+      <div>
+        <div class="user-name" id="sidebarNombre">Cargando…</div>
+        <div class="user-role" id="sidebarRol">—</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <header>
+    <span class="page-title">Configuración del Sistema</span>
+  </header>
+
+  <div class="content">
+    <div class="config-grid">
+      
+      <div class="section-card">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Mi Cuenta y Seguridad
+        </div>
+        <form id="formPerfil">
+          <div class="form-row">
+            <div class="form-group-config">
+              <label class="form-label">Nombre de Usuario</label>
+              <input type="text" id="cUsername" class="form-input" required />
+            </div>
+            <div class="form-group-config">
+              <label class="form-label">Correo Electrónico</label>
+              <input type="email" id="cEmail" class="form-input" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group-config">
+              <label class="form-label">Nueva Contraseña (Dejar en blanco para no cambiar)</label>
+              <input type="password" id="cPassword" class="form-input" placeholder="••••••••" />
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 10px;">Actualizar Mis Datos</button>
+        </form>
+      </div>
+
+      <div class="section-card admin-only">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Registrar Nuevo Agente / Empleado
+        </div>
+        <form id="formNuevoUsuario" autocomplete="off">
+          <div class="form-row">
+            <div class="form-group-config">
+              <label class="form-label">Usuario *</label>
+              <input type="text" id="uUsername" class="form-input" autocomplete="new-password" placeholder="Ej. empleado1" required />
+            </div>
+            <div class="form-group-config">
+              <label class="form-label">Correo *</label>
+              <input type="email" id="uEmail" class="form-input" autocomplete="new-password" placeholder="correo@agencia.com" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group-config">
+              <label class="form-label">Contraseña de Acceso *</label>
+              <input type="password" id="uPassword" class="form-input" autocomplete="new-password" required />
+            </div>
+            <div class="form-group-config">
+              <label class="form-label">Rol del Sistema *</label>
+              <select id="uRol" class="form-input" required>
+                <option value="Empleado">Empleado (Solo modifica su cuenta)</option>
+                <option value="Administrador">Administrador (Control Total)</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" style="margin-top: 10px;">Crear Usuario</button>
+        </form>
+      </div>
+
+      <div class="section-card admin-only">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Parámetros del Sistema de Alertas
+        </div>
+        <form id="formAlertas">
+          <div class="form-row">
+            <div class="form-group-config">
+              <label class="form-label">Anticipación de Alerta de Vencimiento (Días)</label>
+              <input type="number" id="aDias" class="form-input" value="90" min="15" required />
+              <span style="font-size: 11px; color: var(--slate-400); margin-top: 4px;">El sistema marcará en amarillo los documentos que venzan dentro de este margen de días.</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Guardar Configuración</button>
+        </form>
+      </div>
+
+      <div class="section-card admin-only">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          Mantenimiento de Datos y Respaldo
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div>
+            <label class="form-label">Seguridad de la Base de Datos</label>
+            <p style="font-size: 13px; color: var(--slate-500); margin-bottom: 10px;">Descarga una copia completa estructurada en formato SQL de todos tus clientes, expedientes e historiales.</p>
+            <button id="btnBackup" class="btn-primary" style="background: var(--slate-800);">Generar y Descargar Respaldo (.SQL)</button>
+          </div>
+          
+          <div style="border-top: 1px solid var(--slate-100); padding-top: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="form-label" style="margin:0;">Espacio en Bóveda Cifrada (Carpeta Uploads)</label>
+              <span class="badge-storage" id="txtEspacioBoveda">Calculando...</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="barBoveda"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div id="toast" class="toast"><span id="toastMsg"></span></div>
+
+<script src="../js/auth.js"></script>
+<script src="../js/configuracion.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expedientes — Viajes Barraza</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  
+  <link rel="stylesheet" href="../css/index.css" />
+  <link rel="stylesheet" href="../css/clientes.css" />
+</head>
+<body>
+
+<aside>
+  <div class="logo-wrap">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div>
+        <div class="logo-text-main">ArchivoClientes</div>
+        <div class="logo-text-sub">Viajes Barraza</div>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section-label">Principal</div>
+
+    <a class="nav-item" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Panel Principal
+    </a>
+
+    <a class="nav-item" href="clientes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Clientes
+    </a>
+
+    <a class="nav-item active" href="expedientes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      Expedientes
+    </a>
+
+    <a class="nav-item" href="historial.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Historial de Viajes
+    </a>
+
+    <a class="nav-item" href="mapa.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Google Maps
+    </a>
+
+    <div class="nav-section-label" style="margin-top:12px">Sistema</div>
+
+    <a class="nav-item" href="reportes.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Reportes PDF
+    </a>
+
+    <a class="nav-item" href="configuracion.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Configuración
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar" id="sidebarAvatar">A</div>
+      <div>
+        <div class="user-name" id="sidebarNombre">Cargando...</div>
+        <div class="user-role" id="sidebarRol">—</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <header style="justify-content: space-between;">
+    <div class="page-title">Gestión de Expedientes</div>
+
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div class="notif-btn" id="btnNotificaciones" style="position: relative; cursor: pointer;">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-dot" id="badgeAlertas" style="display: none;"></span>
+      </div>
+
+      <button class="btn-secondary" onclick="cerrarSesion()" style="color: var(--danger); border-color: var(--danger-bg); background: var(--danger-bg);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span style="margin-left: 6px;">Cerrar sesión</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="card">
+      <div class="filters-bar">
+        <select class="filter-select" id="filterTipo">
+          <option value="">Todos los documentos</option>
+          <option value="Pasaporte">Pasaportes</option>
+          <option value="Visa">Visas</option>
+          <option value="Seguro">Seguros de Viaje</option>
+        </select>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Documento</th>
+            <th>Cliente</th>
+            <th>Fecha Subida</th>
+            <th>Vencimiento</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tablaDocumentos">
+           <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--slate-400);">Cargando documentos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="modal-backdrop" id="modalGestorBackdrop" style="z-index: 1000;">
+  <div class="modal" style="max-width: 650px; width: 100%;">
+    <div class="modal-header">
+      <span class="modal-title" id="tituloModalGestor">Documentos del Cliente</span>
+      <button class="modal-close" id="modalGestorClose">✕</button>
+    </div>
+    
+    <div class="modal-body" style="background: #f8fafc; padding: 15px;">
+      <div style="background: white; padding: 15px; border-radius: 8px; border: 1px dashed var(--teal-600); margin-bottom: 20px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--teal-800);">Subir nuevo documento</h4>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <select id="miniTipo" class="form-input" style="width: auto; flex: 1;">
+            <option value="Pasaporte">Pasaporte</option>
+            <option value="Visa">Visa</option>
+            <option value="Seguro">Seguro de Viaje</option>
+            <option value="Boleto">Boleto / Vuelo</option>
+            <option value="INE">INE</option>
+          </select>
+          <input type="date" id="miniFechaVenc" class="form-input" style="width: auto; flex: 1;" title="Fecha de Vencimiento (Opcional)">
+          
+          <input type="file" id="miniArchivo" class="form-input" accept=".pdf,.jpg,.jpeg,.png" style="width: auto; flex: 2; padding: 8px;"/>
+          <button class="btn-primary" id="btnMiniSubir" style="padding: 10px 15px;">Subir</button>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin: 20px 0;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;">
+              <input type="checkbox" id="checkAcompanantes" onchange="toggleAcompanantes()"> 
+              ¿El cliente lleva acompañantes en este viaje?
+          </label>
+      </div>
+
+      <div id="contenedorAcompanantes" style="display: block; background: #f3f4f6; padding: 15px; border-radius: 8px; border: 1px dashed #9ca3af; margin-bottom: 20px;">
+          <div id="listaAcompanantes"></div>
+          <button type="button" onclick="agregarCampoAcompanante()" style="margin-top: 10px; background: var(--teal-600); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+              + Agregar otro acompañante
+          </button>
+      </div>
+
+      <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--slate-700);">Archivos en expediente:</h4>
+      <div id="listaDocumentosGestor" style="display:flex; flex-direction:column; gap:10px; max-height: 40vh; overflow-y: auto; padding-right: 5px;">
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalVisorBackdrop" style="z-index: 1100; background: rgba(15, 23, 42, 0.9);">
+  <div class="modal" style="max-width: 900px; width: 95%; height: 90vh; display: flex; flex-direction: column; background: transparent; box-shadow: none;">
+    <div style="display: flex; justify-content: space-between; padding: 15px; background: #fff; border-radius: 8px 8px 0 0;">
+      <span class="modal-title" style="color: var(--slate-800);" id="tituloVisorHD">Visor HD</span>
+      <button class="modal-close" id="modalVisorClose" style="background: var(--danger); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">✕</button>
+    </div>
+    
+    <div class="modal-body" style="flex: 1; padding: 0; background: #222; border-radius: 0 0 8px 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+      
+      <iframe id="iframeVisor" style="width: 100%; height: 100%; border: none; display: none;" src=""></iframe>
+      
+      <img id="imgVisor" style="max-width: 100%; max-height: 100%; object-fit: contain; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" src="" alt="Documento HD">
+      
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Operación exitosa</span>
+</div>
+
+<script src="../js/auth.js"></script>
+<script src="../js/expedientes.js"></script>
+</body>
+</html>
