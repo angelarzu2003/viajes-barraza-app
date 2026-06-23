@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // ── 3. Middlewares PRIMERO (siempre antes de las rutas) ───────
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost', 'http://127.0.0.1'],
+  origin: ['http://localhost', 'http://127.0.0.1', 'http://134.209.70.88'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
