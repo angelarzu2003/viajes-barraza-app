@@ -1,4 +1,5 @@
-const API = 'http://localhost:3000/api';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocal ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const user = requireAuth();
