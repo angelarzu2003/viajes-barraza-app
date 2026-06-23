@@ -14,11 +14,7 @@ const PORT = process.env.PORT || 3000;
  
 // ── 3. Middlewares PRIMERO (siempre antes de las rutas) ───────
 app.use(helmet());
-app.use(cors({
-  origin: ['http://localhost', 'http://127.0.0.1', 'http://134.209.70.88'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors()); // <--- Así de simple. Esto permite el acceso desde CUALQUIER lugar.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
