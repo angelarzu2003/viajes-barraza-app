@@ -1,7 +1,9 @@
 // frontend/js/auth.js
 // Maneja login, logout y protección de rutas con JWT
 
-const API_BASE = 'http://localhost:3000/api'; // Ajusta al puerto de tu server.js
+// Detecta el entorno: si es localhost usa el puerto local, si no, usa la IP del servidor
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocal ? 'http://localhost:3000/api' : 'http://134.209.70.88:3000/api';
 
 /* ─── Elementos del DOM ─── */
 const emailInput  = document.getElementById('email');
