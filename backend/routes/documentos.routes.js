@@ -21,6 +21,7 @@ router.use(verificarToken);
 router.post('/', upload.single('archivo'), ctrl.subirDocumento);
 router.get('/', ctrl.obtenerDocumentos);
 router.delete('/:id', ctrl.eliminarDocumento);
+router.post('/clientes/:clienteId/acompanantes', ctrl.guardarAcompanantesCliente);
 
 // Usamos 'ctrl' en lugar de 'documentosController'
 router.get('/clientes/:clienteId/acompanantes', ctrl.obtenerAcompanantesCliente);

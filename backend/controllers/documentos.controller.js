@@ -215,3 +215,34 @@ exports.obtenerAcompanantesCliente = async (req, res) => {
     return res.json({ acompanantes: [] });
   }
 };
+
+/* ─────────────────────────────────────────
+   POST /api/documentos/clientes/:clienteId/acompanantes
+   Guarda o actualiza los acompañantes de un cliente de forma independiente
+───────────────────────────────────────── */
+exports.guardarAcompanantesCliente = async (req, res) => {
+  try {
+    const { clienteId } = req.params;
+    const { acompanantes } = req.body;
+
+    // 1. Borramos los acompañantes anteriores de este cliente para actualizarlos con los nuevos
+    await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
+
+    // 2. Si vienen acompañantes, los insertamos
+    if (Array.isArray(acompanantes) && acompanantes.length > 0) {
+      for (const acomp of acompanantes) {
+        if (acomp.nombre && acomp.nombre.trim() !== '') {
+          await db.query(
+            `INSERT INTO acompanantes (cliente_id, documento_id, nombre, parentesco) VALUES (?, NULL, ?, ?)`,
+            [clienteId, acomp.nombre.trim(), acomp.parentesco ? acomp.parentesco.trim() : 'Acompañante']
+          );
+        }
+      }
+    }
+
+    return res.json({ message: 'Acompañantes guardados exitosamente.' });
+  } catch (err) {
+    console.error('[Acompañantes] Error al guardar:', err);
+    return res.status(500).json({ message: 'Error interno al guardar acompañantes.' });
+  }
+};

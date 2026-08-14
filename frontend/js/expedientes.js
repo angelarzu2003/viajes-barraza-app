@@ -308,6 +308,16 @@ function toggleAcompanantes() {
     
     if (checkbox && contenedor) {
         contenedor.style.display = checkbox.checked ? 'block' : 'none';
+        
+        // Inyectar el botón de Guardar automáticamente si no existe dentro del contenedor
+        if (checkbox.checked && !document.getElementById('btnGuardarAcomp')) {
+            const btnGuardarHTML = `
+                <button type="button" id="btnGuardarAcomp" onclick="guardarAcompanantesServer()" style="margin-top: 12px; background: var(--teal-600, #0f766e); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 600; display: block; width: 100%;">
+                    💾 Guardar acompañantes
+                </button>
+            `;
+            contenedor.insertAdjacentHTML('beforeend', btnGuardarHTML);
+        }
     }
 }
 
@@ -331,4 +341,51 @@ function agregarCampoAcompananteConDatos(nombre = '', parentesco = '') {
     `;
     
     lista.appendChild(item);
+}
+
+// Nueva función para guardar los acompañantes al hacer clic en el botón
+async function guardarAcompanantesServer() {
+    if (!clienteActivoId) return mostrarToast('Error: Sin cliente seleccionado', 'error');
+
+    const filas = document.querySelectorAll('#listaAcompanantes > div');
+    const listaAcompanantes = [];
+
+    filas.forEach(fila => {
+        const nombreInput = fila.querySelector('.comp-nombre');
+        const parentescoInput = fila.querySelector('.comp-parentesco');
+        if (nombreInput && parentescoInput) {
+            const nombre = nombreInput.value.trim();
+            const parentesco = parentescoInput.value.trim();
+            if (nombre) {
+                listaAcompanantes.push({ nombre, parentesco });
+            }
+        }
+    });
+
+    const btnGuardar = document.getElementById('btnGuardarAcomp');
+    if (btnGuardar) { btnGuardar.textContent = 'Guardando...'; btnGuardar.disabled = true; }
+
+    try {
+        const token = localStorage.getItem('vb_token');
+        const res = await fetch(`${API}/documentos/clientes/${clienteActivoId}/acompanantes`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({ acompanantes: listaAcompanantes })
+        });
+
+        if (res.ok) {
+            mostrarToast('Acompañantes guardados con éxito', 'success');
+        } else {
+            const data = await res.json();
+            mostrarToast(data.message || 'Error al guardar acompañantes', 'error');
+        }
+    } catch (err) {
+        console.error('Error de conexión:', err);
+        mostrarToast('Error de conexión con el servidor', 'error');
+    } finally {
+        if (btnGuardar) { btnGuardar.textContent = '💾 Guardar acompañantes'; btnGuardar.disabled = false; }
+    }
 }
