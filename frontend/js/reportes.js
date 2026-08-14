@@ -44,7 +44,8 @@ async function generarPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        const { cliente, documentos, viajes } = data;
+        // Incluimos acompanantes desde la respuesta de la API
+        const { cliente, documentos, viajes, acompanantes } = data;
         const nombreCompleto = `${cliente.nombre} ${cliente.apellidos || ''}`;
 
         // PORTADA Y DATOS
@@ -103,6 +104,7 @@ async function generarPDF() {
         if (viajes.length === 0) {
             doc.setFontSize(10); doc.setTextColor(150);
             doc.text("No hay viajes registrados.", 14, yPos + 5);
+            yPos += 15;
         } else {
             const viajeRows = viajes.map(v => [
                 v.destino, 
@@ -114,6 +116,29 @@ async function generarPDF() {
                 startY: yPos, head: [['Destino', 'Salida', 'Regreso', 'Estatus']], body: viajeRows,
                 headStyles: { fillColor: [245, 166, 35] }, margin: { left: 14, right: 14 }
             });
+            yPos = doc.lastAutoTable.finalY + 15;
+        }
+
+        // TABLA ACOMPAÑANTES
+        doc.setFontSize(14);
+        doc.setTextColor(26, 140, 114);
+        doc.text("Acompañantes Registrados", 14, yPos);
+        yPos += 5;
+
+        if (!acompanantes || acompanantes.length === 0) {
+            doc.setFontSize(10); doc.setTextColor(150);
+            doc.text("No hay acompañantes registrados.", 14, yPos + 5);
+            yPos += 15;
+        } else {
+            const acompRows = acompanantes.map(a => [
+                a.nombre, 
+                a.parentesco || 'Acompañante'
+            ]);
+            doc.autoTable({
+                startY: yPos, head: [['Nombre', 'Parentesco']], body: acompRows,
+                headStyles: { fillColor: [52, 73, 94] }, margin: { left: 14, right: 14 }
+            });
+            yPos = doc.lastAutoTable.finalY + 15;
         }
 
         // PROCESAMOS IMÁGENES
