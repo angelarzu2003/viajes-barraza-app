@@ -224,7 +224,7 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     const { clienteId } = req.params;
     const { acompanantes } = req.body;
 
-    // 0. Garantizar que la tabla exista en la BD automáticamente para evitar errores 500
+    // 0. Crear la tabla si no existe
     await db.query(`
       CREATE TABLE IF NOT EXISTS acompanantes (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -233,6 +233,13 @@ exports.guardarAcompanantesCliente = async (req, res) => {
         parentesco VARCHAR(100) DEFAULT 'Acompañante'
       )
     `);
+
+    // 0.1. Si la tabla ya existía pero le faltaba la columna cliente_id, la agregamos automáticamente
+    try {
+      await db.query(`ALTER TABLE acompanantes ADD COLUMN cliente_id INT NOT NULL`);
+    } catch (e) {
+      // Si la columna ya existe, el servidor lanzará un aviso que ignoramos con seguridad
+    }
 
     // 1. Borramos los acompañantes anteriores de este cliente
     await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
