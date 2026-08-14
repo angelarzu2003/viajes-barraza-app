@@ -111,9 +111,15 @@ function logout() {
   window.location.href = '../pages/login.html';
 }
 
+// Alias para que funcione tanto cerrarSesion() como logout()
+function cerrarSesion() {
+  logout();
+}
+
 // Exportar para uso en otros scripts si se usa como módulo
 if (typeof module !== 'undefined') {
-  module.exports = { requireAuth, logout };
+  module.exports = { requireAuth, logout, cerrarSesion };
 }
 
 window.cerrarSesion = cerrarSesion;
+window.logout = logout;

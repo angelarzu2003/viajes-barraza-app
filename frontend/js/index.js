@@ -145,11 +145,3 @@ function calcularTiempoAtras(fecha) {
     return "Hace unos instantes";
 }
 
-/* ── CERRAR SESIÓN ── */
-function cerrarSesion() {
-    localStorage.removeItem('vb_token');
-    window.location.href = 'login.html'; 
-}
-
-// Exponemos la función globalmente para el botón del HTML
-window.cerrarSesion = cerrarSesion;
