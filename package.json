@@ -1,0 +1,22 @@
+{
+  "name": "archivoclientesviajesbarraza",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelarzu2003/viajes-barraza-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angelarzu2003/viajes-barraza-app/issues"
+  },
+  "homepage": "https://github.com/angelarzu2003/viajes-barraza-app#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0"
+  }
+}

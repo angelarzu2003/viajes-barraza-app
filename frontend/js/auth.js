@@ -2,8 +2,8 @@
 // Maneja login, logout y protección de rutas con JWT
 
 // Detecta el entorno: si es localhost usa el puerto local, si no, usa la IP del servidor
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE = isLocal ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
+const isLocalDash = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_DASH = isLocalDash ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
 
 /* ─── Elementos del DOM ─── */
 const emailInput  = document.getElementById('email');

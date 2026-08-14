@@ -1,15 +1,15 @@
 // frontend/js/clientes.js
 // CRUD completo de clientes — conectado al backend Express
 
-const API = 'http://localhost:3000/api';
+const API = '/api';
 const POR_PAGINA = 10;
 
 /* ── Estado ── */
-let clientes     = [];
+let clientes        = [];
 let clienteFiltrado = [];
-let editandoId   = null;
-let eliminarId   = null;
-let paginaActual = 1;
+let editandoId      = null;
+let eliminarId      = null;
+let paginaActual    = 1;
 
 /* ── Token JWT ── */
 function getHeaders() {
@@ -24,11 +24,9 @@ function getHeaders() {
    INICIALIZACIÓN
 ══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  // Proteger ruta
   const user = requireAuth();
   if (!user) return;
 
-  // Mostrar usuario en sidebar
   document.getElementById('sidebarNombre').textContent = user.nombre || 'Usuario';
   document.getElementById('sidebarRol').textContent    = user.rol    || 'staff';
   document.getElementById('sidebarAvatar').textContent =
@@ -65,6 +63,7 @@ async function cargarClientes() {
 function poblarFiltros() {
   const ciudades = [...new Set(clientes.map(c => c.ciudad).filter(Boolean))].sort();
   const sel = document.getElementById('filterCiudad');
+  if (!sel) return;
   sel.innerHTML = '<option value="">Todas las ciudades</option>';
   ciudades.forEach(c => {
     const opt = document.createElement('option');
@@ -74,9 +73,13 @@ function poblarFiltros() {
 }
 
 function aplicarFiltros() {
-  const buscar = document.getElementById('searchInput').value.toLowerCase().trim();
-  const activo = document.getElementById('filterActivo').value;
-  const ciudad = document.getElementById('filterCiudad').value;
+  const buscarInput = document.getElementById('searchInput');
+  const activoInput = document.getElementById('filterActivo');
+  const ciudadInput = document.getElementById('filterCiudad');
+
+  const buscar = buscarInput ? buscarInput.value.toLowerCase().trim() : '';
+  const activo = activoInput ? activoInput.value : '';
+  const ciudad = ciudadInput ? ciudadInput.value : '';
 
   clienteFiltrado = clientes.filter(c => {
     const textoMatch = !buscar ||
@@ -87,8 +90,10 @@ function aplicarFiltros() {
   });
 
   paginaActual = 1;
-  document.getElementById('resultsCount').textContent =
-    `${clienteFiltrado.length} cliente${clienteFiltrado.length !== 1 ? 's' : ''}`;
+  const resultsCount = document.getElementById('resultsCount');
+  if (resultsCount) {
+    resultsCount.textContent = `${clienteFiltrado.length} cliente${clienteFiltrado.length !== 1 ? 's' : ''}`;
+  }
 
   renderTabla(paginaActual);
   renderPaginacion();
@@ -99,6 +104,7 @@ function aplicarFiltros() {
 ══════════════════════════════════════════ */
 function renderTabla(pagina) {
   const tbody  = document.getElementById('tablaBody');
+  if (!tbody) return;
   const inicio = (pagina - 1) * POR_PAGINA;
   const slice  = clienteFiltrado.slice(inicio, inicio + POR_PAGINA);
 
@@ -166,6 +172,7 @@ function renderTabla(pagina) {
 function renderPaginacion() {
   const total  = Math.ceil(clienteFiltrado.length / POR_PAGINA);
   const pg     = document.getElementById('pagination');
+  if (!pg) return;
   if (total <= 1) { pg.innerHTML = ''; return; }
 
   let html = `<button class="page-btn" onclick="irPagina(${paginaActual-1})" ${paginaActual===1?'disabled':''}>‹</button>`;
@@ -200,17 +207,19 @@ function cerrarModal() {
 
 function limpiarForm() {
   ['fNombre','fApellidos','fEmail','fTelefono','fFechaNac','fCiudad','fEstado','fDireccion','fNotas']
-    .forEach(id => { document.getElementById(id).value = ''; });
+    .forEach(id => { 
+      const el = document.getElementById(id);
+      if (el) el.value = ''; 
+    });
 }
 
-/* ── Nuevo cliente ── */
 function abrirNuevo() {
   editandoId = null;
-  document.getElementById('btnGuardarTxt').textContent = 'Guardar cliente';
+  const btnTxt = document.getElementById('btnGuardarTxt');
+  if (btnTxt) btnTxt.textContent = 'Guardar cliente';
   abrirModal('Nuevo cliente');
 }
 
-/* ── Editar cliente ── */
 async function abrirEditar(id) {
   try {
     const res  = await fetch(`${API}/clientes/${id}`, { headers: getHeaders() });
@@ -238,20 +247,17 @@ async function abrirEditar(id) {
   }
 }
 
-/* ══════════════════════════════════════════
-   GUARDAR (crear o editar)
-══════════════════════════════════════════ */
 async function guardarCliente() {
   const payload = {
-    nombre:          document.getElementById('fNombre').value.trim(),
-    apellidos:       document.getElementById('fApellidos').value.trim(),
-    email:           document.getElementById('fEmail').value.trim(),
-    telefono:        document.getElementById('fTelefono').value.trim(),
-    fecha_nacimiento:document.getElementById('fFechaNac').value || null,
-    ciudad:          document.getElementById('fCiudad').value.trim(),
-    estado:          document.getElementById('fEstado').value.trim(),
-    direccion:       document.getElementById('fDireccion').value.trim(),
-    notas:           document.getElementById('fNotas').value.trim(),
+    nombre:            document.getElementById('fNombre').value.trim(),
+    apellidos:         document.getElementById('fApellidos').value.trim(),
+    email:             document.getElementById('fEmail').value.trim(),
+    telefono:          document.getElementById('fTelefono').value.trim(),
+    fecha_nacimiento:  document.getElementById('fFechaNac').value || null,
+    ciudad:            document.getElementById('fCiudad').value.trim(),
+    estado:            document.getElementById('fEstado').value.trim(),
+    direccion:         document.getElementById('fDireccion').value.trim(),
+    notas:             document.getElementById('fNotas').value.trim(),
   };
 
   if (!payload.nombre || !payload.apellidos) {
@@ -261,7 +267,7 @@ async function guardarCliente() {
 
   const btn = document.getElementById('btnGuardar');
   btn.disabled = true;
-  btn.querySelector('#btnGuardarTxt').textContent = 'Guardando…';
+  document.getElementById('btnGuardarTxt').textContent = 'Guardando…';
 
   try {
     const url    = editandoId ? `${API}/clientes/${editandoId}` : `${API}/clientes`;
@@ -285,14 +291,10 @@ async function guardarCliente() {
   }
 }
 
-/* ══════════════════════════════════════════
-   ELIMINAR
-══════════════════════════════════════════ */
 function pedirEliminar(id, nombre) {
   eliminarId = id;
-  // Ajustamos el texto para reflejar que ahora es un borrado real y permanente
   document.getElementById('confirmText').textContent =
-    `¿Estás seguro de eliminar a "${nombre}"? Se borrará de forma PERMANENTE junto con todos sus documentos y expedientes cifrados. Esta acción no se puede deshacer.`;
+    `¿Estás seguro de eliminar a "${nombre}"? Se borrará de forma PERMANENTE junto con todos sus documentos y expedientes cifrados.`;
   document.getElementById('confirmBackdrop').classList.add('open');
 }
 
@@ -303,12 +305,9 @@ async function confirmarEliminar() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message);
 
-    // Cambiamos el mensaje para que sea más claro
     mostrarToast('Cliente y expedientes eliminados permanentemente.', 'success');
     document.getElementById('confirmBackdrop').classList.remove('open');
     eliminarId = null;
-    
-    // Esto vuelve a llamar al backend y redibuja la tabla sin el cliente eliminado al instante
     await cargarClientes();
 
   } catch (err) {
@@ -316,12 +315,10 @@ async function confirmarEliminar() {
   }
 }
 
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
 let toastTimer;
 function mostrarToast(msg, tipo = 'success') {
   const el = document.getElementById('toast');
+  if (!el) return;
   document.getElementById('toastMsg').textContent   = msg;
   document.getElementById('toastIcon').textContent  = tipo === 'success' ? '✓' : '✕';
   el.className = `toast show ${tipo}`;
@@ -329,39 +326,53 @@ function mostrarToast(msg, tipo = 'success') {
   toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-/* ══════════════════════════════════════════
-   BIND EVENTOS
-══════════════════════════════════════════ */
 function bindEventos() {
-  document.getElementById('btnNuevoCliente').addEventListener('click', abrirNuevo);
-  document.getElementById('btnGuardar').addEventListener('click', guardarCliente);
-  document.getElementById('btnCancelar').addEventListener('click', cerrarModal);
-  document.getElementById('modalClose').addEventListener('click', cerrarModal);
+  const btnNuevo = document.getElementById('btnNuevoCliente');
+  if (btnNuevo) btnNuevo.addEventListener('click', abrirNuevo);
 
-  // Cerrar modal al click fuera
-  document.getElementById('modalBackdrop').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModal();
-  });
+  const btnGuardar = document.getElementById('btnGuardar');
+  if (btnGuardar) btnGuardar.addEventListener('click', guardarCliente);
 
-  // Confirmar eliminación
-  document.getElementById('btnConfirmSi').addEventListener('click', confirmarEliminar);
-  document.getElementById('btnConfirmNo').addEventListener('click', () => {
-    document.getElementById('confirmBackdrop').classList.remove('open');
-    eliminarId = null;
-  });
+  const btnCancelar = document.getElementById('btnCancelar');
+  if (btnCancelar) btnCancelar.addEventListener('click', cerrarModal);
 
-  // Búsqueda en tiempo real (debounce)
-  let debounce;
-  document.getElementById('searchInput').addEventListener('input', () => {
-    clearTimeout(debounce);
-    debounce = setTimeout(aplicarFiltros, 300);
-  });
+  const modalClose = document.getElementById('modalClose');
+  if (modalClose) modalClose.addEventListener('click', cerrarModal);
 
-  document.getElementById('filterActivo').addEventListener('change', aplicarFiltros);
-  document.getElementById('filterCiudad').addEventListener('change', aplicarFiltros);
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', e => {
+      if (e.target === e.currentTarget) cerrarModal();
+    });
+  }
+
+  const btnSi = document.getElementById('btnConfirmSi');
+  if (btnSi) btnSi.addEventListener('click', confirmarEliminar);
+
+  const btnNo = document.getElementById('btnConfirmNo');
+  if (btnNo) {
+    btnNo.addEventListener('click', () => {
+      document.getElementById('confirmBackdrop').classList.remove('open');
+      eliminarId = null;
+    });
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    let debounce;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(aplicarFiltros, 300);
+    });
+  }
+
+  const filterActivo = document.getElementById('filterActivo');
+  if (filterActivo) filterActivo.addEventListener('change', aplicarFiltros);
+
+  const filterCiudad = document.getElementById('filterCiudad');
+  if (filterCiudad) filterCiudad.addEventListener('change', aplicarFiltros);
 }
 
-// Exponer funciones llamadas desde onclick en la tabla
-window.abrirEditar    = abrirEditar;
-window.pedirEliminar  = pedirEliminar;
-window.irPagina       = irPagina;
+window.abrirEditar   = abrirEditar;
+window.pedirEliminar = pedirEliminar;
+window.irPagina      = irPagina;

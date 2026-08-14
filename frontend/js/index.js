@@ -1,5 +1,5 @@
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE = isLocal ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
+ const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+ const API_BASE = isLocal ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     const user = requireAuth();
@@ -24,7 +24,7 @@ function getHeaders() {
 /* ── ESTADÍSTICAS GLOBALES Y ACTIVIDAD ── */
 async function cargarEstadisticas() {
     try {
-        const res = await fetch(`${API}/dashboard/resumen`, { headers: getHeaders() });
+        const res = await fetch(`${API_BASE}/dashboard/resumen`, { headers: getHeaders() });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message || 'Error en servidor');
@@ -91,7 +91,7 @@ async function cargarEstadisticas() {
 /* ── TABLA DE CLIENTES RECIENTES ── */
 async function cargarClientesRecientes() {
     try {
-        const res = await fetch(`${API}/clientes`, { headers: getHeaders() });
+        const res = await fetch(`${API_DASH}/clientes`, { headers: getHeaders() });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
 
