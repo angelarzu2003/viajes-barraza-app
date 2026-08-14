@@ -151,6 +151,9 @@ function abrirGestor(clienteId) {
     }
 
     document.getElementById('modalGestorBackdrop').classList.add('open');
+    document.getElementById('checkAcompanantes').checked = false;
+    document.getElementById('contenedorAcompanantes').style.display = 'none';
+    document.getElementById('listaAcompanantes').innerHTML = '';
 }
 
 /* ── 4. VISOR HD ── */
