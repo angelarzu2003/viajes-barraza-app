@@ -54,7 +54,15 @@ exports.obtenerDossierCliente = async (req, res) => {
 
         const [viajes] = await db.query('SELECT destino, fecha_salida, fecha_regreso, estatus FROM viajes WHERE cliente_id = ? ORDER BY fecha_salida DESC', [id]);
 
-        return res.json({ cliente: clienteInfo[0], documentos: documentosFormateados, viajes: viajes });
+        // 🔍 NUEVO: Consultar los acompañantes de este cliente para incluirlos en el dossier/reporte
+        const [acompanantes] = await db.query('SELECT nombre, parentesco FROM acompanantes WHERE cliente_id = ?', [id]);
+
+        return res.json({ 
+            cliente: clienteInfo[0], 
+            documentos: documentosFormateados, 
+            viajes: viajes,
+            acompanantes: acompanantes 
+        });
     } catch (err) {
         console.error('[Reportes] Error:', err);
         return res.status(500).json({ message: 'Error interno al generar datos' });
