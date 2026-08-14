@@ -254,3 +254,28 @@
 .page-btn:hover { background: var(--slate-50); }
 .page-btn.active { background: var(--teal-500); color: #fff; border-color: var(--teal-500); font-weight: 600; }
 .page-btn:disabled { opacity: .4; cursor: default; }
+
+
+/* Contenedor mejorado para los acompañantes */
+#contenedorAcompanantes {
+  background: #f8fafc !important; /* Fondo limpio y claro */
+  border: 1px dashed #cbd5e1 !important; /* Borde punteado elegante */
+  padding: 18px !important;
+  border-radius: 10px !important;
+}
+
+/* Botón de + Agregar otro acompañante con excelente visibilidad */
+#contenedorAcompanantes button[type="button"] {
+  background: #0f766e !important; /* Tono teal oscuro profesional */
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  padding: 9px 16px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);
+  transition: background 0.2s ease;
+}
+
+#contenedorAcompanantes button[type="button"]:hover {
+  background: #115e59 !important; /* Tono más profundo al pasar el mouse */
+}
