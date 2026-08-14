@@ -227,7 +227,7 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     // 1. Borramos los acompañantes anteriores de este cliente
     await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
 
-    // 2. Si vienen acompañantes, los insertamos con las columnas reales de la DB
+    // 2. Si vienen acompañantes, los insertamos usando únicamente las columnas reales
     if (Array.isArray(acompanantes) && acompanantes.length > 0) {
       for (const acomp of acompanantes) {
         if (acomp.nombre && acomp.nombre.trim() !== '') {
