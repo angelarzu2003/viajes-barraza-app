@@ -201,7 +201,7 @@ exports.eliminarDocumento = async (req, res) => {
 };
 
 /* ─────────────────────────────────────────
-   GET /api/clientes/:clienteId/acompanantes
+   GET /api/documentos/clientes/:clienteId/acompanantes
    Obtiene los acompañantes guardados de un cliente
 ───────────────────────────────────────── */
 exports.obtenerAcompanantesCliente = async (req, res) => {
@@ -210,7 +210,8 @@ exports.obtenerAcompanantesCliente = async (req, res) => {
     const [rows] = await db.query('SELECT * FROM acompanantes WHERE cliente_id = ?', [clienteId]);
     return res.json({ acompanantes: rows });
   } catch (err) {
-    console.error('[Acompañantes] Error al obtener:', err);
-    return res.status(500).json({ message: 'Error en base de datos.' });
+    console.error('[Acompañantes] Error al obtener (posible tabla faltante):', err.message);
+    // Si la tabla aún no existe o hay error, devolvemos un array vacío para no dar error 500
+    return res.json({ acompanantes: [] });
   }
 };
