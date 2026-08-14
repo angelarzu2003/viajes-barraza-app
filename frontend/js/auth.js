@@ -115,3 +115,5 @@ function logout() {
 if (typeof module !== 'undefined') {
   module.exports = { requireAuth, logout };
 }
+
+window.cerrarSesion = cerrarSesion;

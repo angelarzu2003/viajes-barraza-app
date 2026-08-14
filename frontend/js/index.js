@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+// frontend/js/index.js
 
 document.addEventListener('DOMContentLoaded', () => {
     const user = requireAuth();
@@ -23,7 +23,7 @@ function getHeaders() {
 /* ── ESTADÍSTICAS GLOBALES Y ACTIVIDAD ── */
 async function cargarEstadisticas() {
     try {
-        const res = await fetch(`${API_BASE}/dashboard/resumen`, { headers: getHeaders() });
+        const res = await fetch('/api/dashboard/resumen', { headers: getHeaders() });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message || 'Error en servidor');
@@ -90,7 +90,7 @@ async function cargarEstadisticas() {
 /* ── TABLA DE CLIENTES RECIENTES ── */
 async function cargarClientesRecientes() {
     try {
-        const res = await fetch(`${API_DASH}/clientes`, { headers: getHeaders() });
+        const res = await fetch('/api/clientes', { headers: getHeaders() });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
 
@@ -145,12 +145,11 @@ function calcularTiempoAtras(fecha) {
     return "Hace unos instantes";
 }
 
-
 /* ── CERRAR SESIÓN ── */
 function cerrarSesion() {
-    // 1. Borramos el token de seguridad
     localStorage.removeItem('vb_token');
-    
-    // 2. Redirigimos a la pantalla de Login (Asegúrate de que este sea el nombre correcto de tu archivo HTML de login)
     window.location.href = 'login.html'; 
 }
+
+// Exponemos la función globalmente para el botón del HTML
+window.cerrarSesion = cerrarSesion;
