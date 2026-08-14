@@ -14,7 +14,7 @@ function getHeaders() {
 
 async function cargarClientesEnSelect() {
     try {
-        const res = await fetch(`${API}/clientes`, { headers: getHeaders() });
+        const res = await fetch(`${API_BASE}/clientes`, { headers: getHeaders() });
         const data = await res.json();
         const select = document.getElementById('selectClienteReporte');
         
@@ -36,7 +36,7 @@ async function generarPDF() {
     btn.disabled = true;
 
     try {
-        const res = await fetch(`${API}/reportes/cliente/${id}`, { headers: getHeaders() });
+        const res = await fetch(`${API_BASE}/reportes/cliente/${id}`, { headers: getHeaders() });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message);

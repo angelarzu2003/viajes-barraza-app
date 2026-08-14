@@ -32,7 +32,7 @@ async function inicializarMapa() {
 
 async function cargarPines() {
     try {
-        const res = await fetch(`${API}/mapa/ubicaciones`, { headers: getHeaders() });
+        const res = await fetch(`${API_BASE}/mapa/ubicaciones`, { headers: getHeaders() });
         if (!res.ok) throw new Error('Error al traer datos del mapa');
         const data = await res.json();
         
