@@ -1,6 +1,6 @@
 // frontend/js/auth.js
 // Maneja login, logout y protección de rutas con JWT
-
+const API_BASE = '/api';
 // Detecta el entorno: si es localhost usa el puerto local, si no, usa la IP del servidor
 const isLocalDash = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_DASH = isLocalDash ? 'http://localhost:3000/api' : 'http://134.209.70.88/api';
