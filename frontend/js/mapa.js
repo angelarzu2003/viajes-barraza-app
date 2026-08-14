@@ -1,4 +1,4 @@
-var API_BASE = '/api';
+// frontend/js/mapa.js
 let mapaGlobal;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +13,6 @@ function getHeaders() {
 // Función para poner las fechas bonitas (DD/MM/YYYY)
 function formatearFecha(fechaStr) {
     if (!fechaStr) return 'Por definir';
-    // Se ajusta la zona horaria para evitar que se reste un día
     const fecha = new Date(fechaStr);
     const fechaAjustada = new Date(fecha.getTime() + fecha.getTimezoneOffset() * 60000);
     return fechaAjustada.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -32,7 +31,7 @@ async function inicializarMapa() {
 
 async function cargarPines() {
     try {
-        const res = await fetch(`${API_BASE}/mapa/ubicaciones`, { headers: getHeaders() });
+        const res = await fetch('/api/mapa/ubicaciones', { headers: getHeaders() });
         if (!res.ok) throw new Error('Error al traer datos del mapa');
         const data = await res.json();
         
