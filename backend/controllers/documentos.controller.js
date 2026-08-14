@@ -224,10 +224,20 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     const { clienteId } = req.params;
     const { acompanantes } = req.body;
 
+    // 0. Garantizar que la tabla exista en la BD automáticamente para evitar errores 500
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS acompanantes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cliente_id INT NOT NULL,
+        nombre VARCHAR(255) NOT NULL,
+        parentesco VARCHAR(100) DEFAULT 'Acompañante'
+      )
+    `);
+
     // 1. Borramos los acompañantes anteriores de este cliente
     await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
 
-    // 2. Si vienen acompañantes, los insertamos usando únicamente las columnas reales
+    // 2. Si vienen acompañantes, los insertamos
     if (Array.isArray(acompanantes) && acompanantes.length > 0) {
       for (const acomp of acompanantes) {
         if (acomp.nombre && acomp.nombre.trim() !== '') {
@@ -242,7 +252,6 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     return res.json({ message: 'Acompañantes guardados exitosamente.' });
   } catch (err) {
     console.error('[Acompañantes] Error al guardar:', err);
-    // Devolvemos el error exacto de MySQL a la pantalla para identificarlo de inmediato
-    return res.status(500).json({ message: 'Error de BD: ' + err.message });
+    return res.status(500).json({ message: 'Error interno: ' + err.message });
   }
 };
