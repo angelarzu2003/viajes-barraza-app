@@ -263,21 +263,21 @@ function toggleAcompanantes() {
 
 function agregarCampoAcompanante() {
     const lista = document.getElementById('listaAcompanantes');
-    if (!lista) return;
-
-    // Creamos un ID único para poder eliminar este campo individualmente si el usuario se equivoca
-    const divId = 'acomp_' + Date.now();
-    const div = document.createElement('div');
-    div.id = divId;
-    div.style = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
     
-    // Inyectamos los campos de texto y un botón rojo pequeño para borrar esa fila
-    div.innerHTML = `
-        <input type="text" class="form-input" placeholder="Nombre del acompañante" style="flex: 1;">
-        <input type="text" class="form-input" placeholder="Parentesco o Documento" style="flex: 1;">
-        <button type="button" class="btn-secondary" style="border-color: var(--danger); color: var(--danger); padding: 5px 10px;" onclick="document.getElementById('${divId}').remove()">✕</button>
+    // Creamos el div contenedor para la nueva fila
+    const item = document.createElement('div');
+    item.style.display = 'flex';
+    item.style.gap = '10px';
+    item.style.marginBottom = '10px';
+    item.style.alignItems = 'center';
+    
+    // Definimos el contenido (el input y el botón de borrar)
+    item.innerHTML = `
+        <input type="text" class="form-input" placeholder="Nombre completo del acompañante" style="flex: 1; padding: 8px;">
+        <button type="button" onclick="this.parentElement.remove()" style="background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;" title="Eliminar">✕</button>
     `;
     
-    lista.appendChild(div);
+    // Usamos appendChild: esto "agrega" el elemento sin tocar los que ya existen arriba
+    lista.appendChild(item);
 }
 

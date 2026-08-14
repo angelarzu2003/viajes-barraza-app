@@ -160,8 +160,8 @@
 
       <div id="contenedorAcompanantes" style="display: none; background: #f3f4f6; padding: 15px; border-radius: 8px; border: 1px dashed #9ca3af; margin-bottom: 20px;">
           <div id="listaAcompanantes"></div>
-          <button type="button" onclick="agregarCampoAcompanante()" style="margin-top: 10px; background: var(--teal-600); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
-              + Agregar otro acompañante
+          <button type="button" onclick="event.preventDefault(); agregarCampoAcompanante();" style="margin-top: 10px; background: #0f766e; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+            + Agregar otro acompañante
           </button>
       </div>
 
