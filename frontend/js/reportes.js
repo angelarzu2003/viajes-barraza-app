@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+var API_BASE = '/api';
 const toast = document.getElementById('toast');
 const toastMsg = document.getElementById('toastMsg');
 

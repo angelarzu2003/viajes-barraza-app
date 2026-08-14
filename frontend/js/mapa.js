@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+var API_BASE = '/api';
 let mapaGlobal;
 
 document.addEventListener('DOMContentLoaded', () => {
