@@ -1,4 +1,4 @@
-var API_BASE = '/api';
+// frontend/js/reportes.js
 const toast = document.getElementById('toast');
 const toastMsg = document.getElementById('toastMsg');
 
@@ -14,7 +14,7 @@ function getHeaders() {
 
 async function cargarClientesEnSelect() {
     try {
-        const res = await fetch(`${API_BASE}/clientes`, { headers: getHeaders() });
+        const res = await fetch('/api/clientes', { headers: getHeaders() });
         const data = await res.json();
         const select = document.getElementById('selectClienteReporte');
         
@@ -36,7 +36,7 @@ async function generarPDF() {
     btn.disabled = true;
 
     try {
-        const res = await fetch(`${API_BASE}/reportes/cliente/${id}`, { headers: getHeaders() });
+        const res = await fetch(`/api/reportes/cliente/${id}`, { headers: getHeaders() });
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message);
@@ -116,7 +116,7 @@ async function generarPDF() {
             });
         }
 
-        // PROCESAMOS PRIMERO LAS IMÁGENES (JPG/PNG) EN EL JSPDF
+        // PROCESAMOS IMÁGENES
         const imagenes = documentos.filter(d => d.nombre_original && ['jpg', 'jpeg', 'png'].includes(d.nombre_original.split('.').pop().toLowerCase()));
         
         if (imagenes.length > 0) {
@@ -133,53 +133,36 @@ async function generarPDF() {
                     doc.setFontSize(16); doc.setTextColor(26, 140, 114);
                     doc.text(`Documento: ${imgDoc.tipo.toUpperCase()}`, 14, 20);
                     
-                    // 1. Medimos la imagen original
                     const dims = await obtenerDimensionesImagen(imgDoc.archivoBase64);
+                    const maxWidth = 182;  
+                    const maxHeight = 230; 
                     
-                    // 2. Definimos el espacio máximo disponible en la hoja A4
-                    const maxWidth = 182;  // Ancho máximo permitido
-                    const maxHeight = 230; // Alto máximo permitido (dejando espacio para el título)
-                    
-                    // 3. Calculamos la proporción perfecta para no deformarla
                     const ratio = Math.min(maxWidth / dims.width, maxHeight / dims.height);
                     const finalWidth = dims.width * ratio;
                     const finalHeight = dims.height * ratio;
-                    
-                    // 4. Calculamos el espacio sobrante para centrarla perfectamente en la hoja
                     const xPos = 14 + ((maxWidth - finalWidth) / 2);
                     
-                    // 5. La dibujamos respetando sus proporciones naturales
                     doc.addImage(
                         imgDoc.archivoBase64, 
                         imgDoc.nombre_original.toLowerCase().endsWith('png') ? 'PNG' : 'JPEG', 
-                        xPos, 
-                        30, 
-                        finalWidth, 
-                        finalHeight
+                        xPos, 30, finalWidth, finalHeight
                     );
                 }
             }
         }
 
-        // 🛑 MAGIA DE FUSIÓN CON PDF-LIB 🛑
-        // 1. Extraemos el PDF que acabamos de dibujar como bytes crudos
+        // FUSIÓN CON PDF-LIB
         const mainPdfBytes = doc.output('arraybuffer');
         const { PDFDocument } = window.PDFLib;
-        
-        // 2. Lo abrimos con el fusionador
         const finalPdf = await PDFDocument.load(mainPdfBytes);
 
-        // 3. Buscamos los PDFs que el backend nos mandó
         const pdfsExternos = documentos.filter(d => d.nombre_original && d.nombre_original.toLowerCase().endsWith('.pdf'));
 
         for (let pdfAnexo of pdfsExternos) {
             if (pdfAnexo.archivoBase64) {
                 try {
-                    // Convertimos la base64 a formato binario para que lo lea pdf-lib
                     const externalPdfBytes = await fetch(pdfAnexo.archivoBase64).then(res => res.arrayBuffer());
                     const externalDoc = await PDFDocument.load(externalPdfBytes);
-                    
-                    // Copiamos todas las páginas del seguro y las pegamos al final de nuestro reporte
                     const copiedPages = await finalPdf.copyPages(externalDoc, externalDoc.getPageIndices());
                     copiedPages.forEach(page => finalPdf.addPage(page));
                 } catch (e) {
@@ -188,7 +171,6 @@ async function generarPDF() {
             }
         }
 
-        // 4. Guardamos y descargamos el archivo fusionado final
         const finalPdfBytes = await finalPdf.save();
         const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
@@ -214,7 +196,6 @@ function mostrarToast(mensaje, tipo = 'success') {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Función para medir la imagen real antes de dibujarla en el PDF
 function obtenerDimensionesImagen(base64) {
     return new Promise((resolve) => {
         const img = new Image();
