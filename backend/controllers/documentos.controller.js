@@ -242,6 +242,7 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     return res.json({ message: 'Acompañantes guardados exitosamente.' });
   } catch (err) {
     console.error('[Acompañantes] Error al guardar:', err);
-    return res.status(500).json({ message: 'Error interno al guardar acompañantes.' });
+    // Devolvemos el error exacto de MySQL a la pantalla para identificarlo de inmediato
+    return res.status(500).json({ message: 'Error de BD: ' + err.message });
   }
 };
