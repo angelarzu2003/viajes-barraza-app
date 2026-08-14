@@ -177,11 +177,12 @@ function abrirVisorHD(docId, nombreDoc) {
     document.getElementById('modalVisorBackdrop').classList.add('open');
 }
 
-/* ── 5. SUBIDA DESDE EL EXPEDIENTE (CON FECHA) ── */
+/* ── 5. SUBIDA DESDE EL EXPEDIENTE (CON ACOMPAÑANTES) ── */
 async function subirDocumentoRápido() {
     const fileInput = document.getElementById('miniArchivo');
     const tipoInput = document.getElementById('miniTipo');
     const fechaInput = document.getElementById('miniFechaVenc');
+    const checkAcomp = document.getElementById('checkAcompanantes');
     
     if (!fileInput || !fileInput.files[0]) return mostrarToast('Selecciona un archivo', 'error');
     if (!clienteActivoId) return mostrarToast('Error: Sin cliente', 'error');
@@ -189,11 +190,28 @@ async function subirDocumentoRápido() {
     const formData = new FormData();
     formData.append('cliente_id', clienteActivoId);
     formData.append('tipo', tipoInput.value);
-    // Agregamos la fecha al FormData si el usuario la llenó
+    
     if (fechaInput && fechaInput.value) {
         formData.append('fecha_vencimiento', fechaInput.value);
     }
     formData.append('archivo', fileInput.files[0]);
+
+    // Recolectar acompañantes si la casilla está marcada
+    if (checkAcomp && checkAcomp.checked) {
+        const filas = document.querySelectorAll('#listaAcompanantes > div');
+        const listaAcompanantes = [];
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector('.comp-nombre').value.trim();
+            const parentesco = fila.querySelector('.comp-parentesco').value.trim();
+            if (nombre) {
+                listaAcompanantes.append ? null : listaAcompanantes.push({ nombre, parentesco });
+            }
+        });
+
+        // Lo mandamos al backend convertido en texto JSON
+        formData.append('acompanantes', JSON.stringify(listaAcompanantes));
+    }
 
     const btn = document.getElementById('btnMiniSubir');
     btn.textContent = '...'; btn.disabled = true;
@@ -209,7 +227,11 @@ async function subirDocumentoRápido() {
         if (res.ok) {
             mostrarToast('Archivo cifrado con éxito', 'success');
             fileInput.value = ''; 
-            fechaInput.value = ''; // Limpiamos la fecha
+            fechaInput.value = ''; 
+            if (checkAcomp) checkAcomp.checked = false;
+            document.getElementById('contenedorAcompanantes').style.display = 'none';
+            document.getElementById('listaAcompanantes').innerHTML = '';
+            
             await cargarDocumentos(); 
             abrirGestor(clienteActivoId); 
         } else {
@@ -261,23 +283,32 @@ function toggleAcompanantes() {
     }
 }
 
+/* ── 7. ACOMPAÑANTES ── */
+
+function toggleAcompanantes() {
+    const checkbox = document.getElementById('checkAcompanantes');
+    const contenedor = document.getElementById('contenedorAcompanantes');
+    
+    if (checkbox && contenedor) {
+        contenedor.style.display = checkbox.checked ? 'block' : 'none';
+    }
+}
+
 function agregarCampoAcompanante() {
     const lista = document.getElementById('listaAcompanantes');
     
-    // Creamos el div contenedor para la nueva fila
     const item = document.createElement('div');
     item.style.display = 'flex';
     item.style.gap = '10px';
     item.style.marginBottom = '10px';
     item.style.alignItems = 'center';
     
-    // Definimos el contenido (el input y el botón de borrar)
+    // Ahora incluye el input de Nombre y un input para el Parentesco
     item.innerHTML = `
-        <input type="text" class="form-input" placeholder="Nombre completo del acompañante" style="flex: 1; padding: 8px;">
+        <input type="text" class="form-input comp-nombre" placeholder="Nombre completo del acompañante" style="flex: 2; padding: 8px;">
+        <input type="text" class="form-input comp-parentesco" placeholder="Parentesco (Ej. Esposa)" style="flex: 1; padding: 8px;">
         <button type="button" onclick="this.parentElement.remove()" style="background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;" title="Eliminar">✕</button>
     `;
     
-    // Usamos appendChild: esto "agrega" el elemento sin tocar los que ya existen arriba
     lista.appendChild(item);
 }
-
