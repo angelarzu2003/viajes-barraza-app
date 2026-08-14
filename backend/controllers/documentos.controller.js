@@ -224,27 +224,10 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     const { clienteId } = req.params;
     const { acompanantes } = req.body;
 
-    // 0. Crear la tabla si no existe con la estructura limpia
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS acompanantes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        cliente_id INT NOT NULL,
-        nombre VARCHAR(255) NOT NULL,
-        parentesco VARCHAR(100) DEFAULT 'Acompañante'
-      )
-    `);
-
-    // 0.1. Si la columna 'viaje_id' existe en la tabla vieja, la hacemos NULL para que no exija valor por defecto
-    try {
-      await db.query(`ALTER TABLE acompanantes MODIFY COLUMN viaje_id INT NULL`);
-    } catch (e) {
-      // Si la columna no existe en absoluto, se ignora con total seguridad
-    }
-
-    // 1. Borramos los acompañantes anteriores de este cliente
+    // Borramos los anteriores
     await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
 
-    // 2. Si vienen acompañantes, los insertamos
+    // Insertamos los nuevos
     if (Array.isArray(acompanantes) && acompanantes.length > 0) {
       for (const acomp of acompanantes) {
         if (acomp.nombre && acomp.nombre.trim() !== '') {
@@ -258,7 +241,7 @@ exports.guardarAcompanantesCliente = async (req, res) => {
 
     return res.json({ message: 'Acompañantes guardados exitosamente.' });
   } catch (err) {
-    console.error('[Acompañantes] Error al guardar:', err);
+    console.error('[Acompañantes] Error:', err);
     return res.status(500).json({ message: 'Error interno: ' + err.message });
   }
 };
