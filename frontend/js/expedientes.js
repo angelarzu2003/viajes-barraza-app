@@ -111,7 +111,7 @@ function renderTablaChecklist(docs) {
 }
 
 /* ── 3. ABRIR GESTOR (MODAL DE ARCHIVOS) ── */
-function abrirGestor(clienteId) {
+async function abrirGestor(clienteId) {
     clienteActivoId = clienteId;
     const docsDelCliente = documentosGlobal.filter(d => String(d.cliente_id) === String(clienteId) && d.doc_id != null);
     
@@ -150,10 +150,35 @@ function abrirGestor(clienteId) {
         }).join('');
     }
 
-    document.getElementById('modalGestorBackdrop').classList.add('open');
+    // Limpiar campos de subida rápida y acompañantes por defecto
+    document.getElementById('miniArchivo').value = '';
+    document.getElementById('miniFechaVenc').value = '';
     document.getElementById('checkAcompanantes').checked = false;
     document.getElementById('contenedorAcompanantes').style.display = 'none';
     document.getElementById('listaAcompanantes').innerHTML = '';
+
+    // Consultar al servidor si este cliente tiene acompañantes guardados previamente
+    try {
+        const token = localStorage.getItem('vb_token');
+        const resAcomp = await fetch(`${API}/clientes/${clienteId}/acompanantes`, { 
+            headers: { 'Authorization': `Bearer ${token}` } 
+        });
+        if (resAcomp.ok) {
+            const dataAcomp = await resAcomp.json();
+            if (dataAcomp.acompanantes && dataAcomp.acompanantes.length > 0) {
+                document.getElementById('checkAcompanantes').checked = true;
+                document.getElementById('contenedorAcompanantes').style.display = 'block';
+                
+                dataAcomp.acompanantes.forEach(acomp => {
+                    agregarCampoAcompananteConDatos(acomp.nombre, acomp.parentesco);
+                });
+            }
+        }
+    } catch (err) {
+        console.error('Error al recuperar acompañantes:', err);
+    }
+
+    document.getElementById('modalGestorBackdrop').classList.add('open');
 }
 
 /* ── 4. VISOR HD ── */
@@ -202,10 +227,14 @@ async function subirDocumentoRápido() {
         const listaAcompanantes = [];
 
         filas.forEach(fila => {
-            const nombre = fila.querySelector('.comp-nombre').value.trim();
-            const parentesco = fila.querySelector('.comp-parentesco').value.trim();
-            if (nombre) {
-                listaAcompanantes.append ? null : listaAcompanantes.push({ nombre, parentesco });
+            const nombreInput = fila.querySelector('.comp-nombre');
+            const parentescoInput = fila.querySelector('.comp-parentesco');
+            if (nombreInput && parentescoInput) {
+                const nombre = nombreInput.value.trim();
+                const parentesco = parentescoInput.value.trim();
+                if (nombre) {
+                    listaAcompanantes.push({ nombre, parentesco });
+                }
             }
         });
 
@@ -271,18 +300,6 @@ function mostrarToast(mensaje, tipo = 'success') {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* ── 7. ACOMPAÑANTES (Agregado para corregir el botón bloqueado) ── */
-
-function toggleAcompanantes() {
-    const checkbox = document.getElementById('checkAcompanantes');
-    const contenedor = document.getElementById('contenedorAcompanantes');
-    
-    // Muestra u oculta el contenedor dependiendo de si el checkbox está marcado
-    if (checkbox && contenedor) {
-        contenedor.style.display = checkbox.checked ? 'block' : 'none';
-    }
-}
-
 /* ── 7. ACOMPAÑANTES ── */
 
 function toggleAcompanantes() {
@@ -295,6 +312,10 @@ function toggleAcompanantes() {
 }
 
 function agregarCampoAcompanante() {
+    agregarCampoAcompananteConDatos('', '');
+}
+
+function agregarCampoAcompananteConDatos(nombre = '', parentesco = '') {
     const lista = document.getElementById('listaAcompanantes');
     
     const item = document.createElement('div');
@@ -303,10 +324,9 @@ function agregarCampoAcompanante() {
     item.style.marginBottom = '10px';
     item.style.alignItems = 'center';
     
-    // Ahora incluye el input de Nombre y un input para el Parentesco
     item.innerHTML = `
-        <input type="text" class="form-input comp-nombre" placeholder="Nombre completo del acompañante" style="flex: 2; padding: 8px;">
-        <input type="text" class="form-input comp-parentesco" placeholder="Parentesco (Ej. Esposa)" style="flex: 1; padding: 8px;">
+        <input type="text" class="form-input comp-nombre" value="${nombre}" placeholder="Nombre completo del acompañante" style="flex: 2; padding: 8px;">
+        <input type="text" class="form-input comp-parentesco" value="${parentesco}" placeholder="Parentesco (Ej. Esposa)" style="flex: 1; padding: 8px;">
         <button type="button" onclick="this.parentElement.remove()" style="background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;" title="Eliminar">✕</button>
     `;
     

@@ -19,13 +19,13 @@ exports.subirDocumento = async (req, res) => {
       return res.status(400).json({ message: 'No se detectó ningún archivo.' });
     }
 
-    const { cliente_id, expediente_id, tipo, fecha_vencimiento } = req.body;
+    const { cliente_id, expediente_id, tipo, fecha_vencimiento, acompanantes } = req.body;
     
     if (!cliente_id) {
       return res.status(400).json({ message: 'El ID del cliente es obligatorio.' });
     }
 
-    // 1. Generar Vector de Inicialización (IV) de 16 bytes (Es como la sal de la contraseña)
+    // 1. Generar Vector de Inicialización (IV) de 16 bytes
     const iv = crypto.randomBytes(16);
     
     // 2. Crear el encriptador y procesar el archivo desde la RAM
@@ -38,7 +38,7 @@ exports.subirDocumento = async (req, res) => {
     
     fs.writeFileSync(rutaDestino, encryptedBuffer);
 
-    // 4. Guardar el registro en la base de datos
+    // 4. Guardar el documento en la base de datos
     const [result] = await db.query(
       `INSERT INTO documentos 
         (expediente_id, cliente_id, tipo, nombre_original, ruta_cifrada, iv_hex, fecha_vencimiento, subido_por) 
@@ -48,16 +48,37 @@ exports.subirDocumento = async (req, res) => {
         cliente_id, 
         tipo || 'Otro', 
         req.file.originalname, 
-        nombreEncriptado, // Solo guardamos el nombre final del archivo
-        iv.toString('hex'), // Guardamos el IV para poder desencriptarlo después
+        nombreEncriptado, 
+        iv.toString('hex'), 
         fecha_vencimiento || null, 
-        req.usuario.id // Viene de tu token de login
+        req.usuario.id 
       ]
     );
 
+    const documentoId = result.insertId;
+
+    // 5. 👨‍👩‍👧‍👦 GUARDAR ACOMPAÑANTES (Si se enviaron desde el frontend)
+    if (acompanantes) {
+      try {
+        const listaAcomp = JSON.parse(acompanantes);
+        if (Array.isArray(listaAcomp) && listaAcomp.length > 0) {
+          for (const acomp of listaAcomp) {
+            if (acomp.nombre) {
+              await db.query(
+                `INSERT INTO acompanantes (documento_id, cliente_id, nombre, parentesco) VALUES (?, ?, ?, ?)`,
+                [documentoId, cliente_id, acomp.nombre, acomp.parentesco || 'Acompañante']
+              );
+            }
+          }
+        }
+      } catch (jsonErr) {
+        console.error('[Acompañantes] Error al parsear JSON:', jsonErr);
+      }
+    }
+
     return res.status(201).json({ 
-      message: 'Documento encriptado y guardado exitosamente.',
-      documento_id: result.insertId 
+      message: 'Documento y acompañantes guardados exitosamente.',
+      documento_id: documentoId 
     });
 
   } catch (err) {
@@ -65,7 +86,6 @@ exports.subirDocumento = async (req, res) => {
     return res.status(500).json({ message: 'Error interno al procesar el documento.' });
   }
 };
-
 /* ─────────────────────────────────────────
    GET /api/documentos
    Obtiene la lista de documentos subidos
@@ -177,5 +197,20 @@ exports.eliminarDocumento = async (req, res) => {
   } catch (err) {
     console.error('[Documentos] Error al eliminar documento:', err);
     return res.status(500).json({ message: 'Error interno al eliminar el documento.' });
+  }
+};
+
+/* ─────────────────────────────────────────
+   GET /api/clientes/:clienteId/acompanantes
+   Obtiene los acompañantes guardados de un cliente
+───────────────────────────────────────── */
+exports.obtenerAcompanantesCliente = async (req, res) => {
+  try {
+    const { clienteId } = req.params;
+    const [rows] = await db.query('SELECT * FROM acompanantes WHERE cliente_id = ?', [clienteId]);
+    return res.json({ acompanantes: rows });
+  } catch (err) {
+    console.error('[Acompañantes] Error al obtener:', err);
+    return res.status(500).json({ message: 'Error en base de datos.' });
   }
 };
