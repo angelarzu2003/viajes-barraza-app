@@ -157,10 +157,10 @@ async function abrirGestor(clienteId) {
     document.getElementById('contenedorAcompanantes').style.display = 'none';
     document.getElementById('listaAcompanantes').innerHTML = '';
 
-    // Consultar al servidor si este cliente tiene acompañantes guardados previamente
+    // Consultar al servidor si este cliente tiene acompañantes guardados previamente (Ruta corregida con /documentos)
     try {
         const token = localStorage.getItem('vb_token');
-        const resAcomp = await fetch(`${API}/clientes/${clienteId}/acompanantes`, { 
+        const resAcomp = await fetch(`${API}/documentos/clientes/${clienteId}/acompanantes`, { 
             headers: { 'Authorization': `Bearer ${token}` } 
         });
         if (resAcomp.ok) {
