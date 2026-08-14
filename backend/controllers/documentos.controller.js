@@ -211,7 +211,6 @@ exports.obtenerAcompanantesCliente = async (req, res) => {
     return res.json({ acompanantes: rows });
   } catch (err) {
     console.error('[Acompañantes] Error al obtener (posible tabla faltante):', err.message);
-    // Si la tabla aún no existe o hay error, devolvemos un array vacío para no dar error 500
     return res.json({ acompanantes: [] });
   }
 };
@@ -225,15 +224,15 @@ exports.guardarAcompanantesCliente = async (req, res) => {
     const { clienteId } = req.params;
     const { acompanantes } = req.body;
 
-    // 1. Borramos los acompañantes anteriores de este cliente para actualizarlos con los nuevos
+    // 1. Borramos los acompañantes anteriores de este cliente
     await db.query('DELETE FROM acompanantes WHERE cliente_id = ?', [clienteId]);
 
-    // 2. Si vienen acompañantes, los insertamos
+    // 2. Si vienen acompañantes, los insertamos sin el campo documento_id
     if (Array.isArray(acompanantes) && acompanantes.length > 0) {
       for (const acomp of acompanantes) {
         if (acomp.nombre && acomp.nombre.trim() !== '') {
           await db.query(
-            `INSERT INTO acompanantes (cliente_id, documento_id, nombre, parentesco) VALUES (?, NULL, ?, ?)`,
+            `INSERT INTO acompanantes (cliente_id, nombre, parentesco) VALUES (?, ?, ?)`,
             [clienteId, acomp.nombre.trim(), acomp.parentesco ? acomp.parentesco.trim() : 'Acompañante']
           );
         }
