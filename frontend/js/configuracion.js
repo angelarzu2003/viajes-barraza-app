@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Verificar que el usuario tenga sesión iniciada

@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 const modalBackdrop = document.getElementById('modalViajeBackdrop');
 const toast = document.getElementById('toast');
